@@ -22,7 +22,7 @@ return [
         '%s,%s,%s',
         'localhost,localhost:3000,localhost:8000,127.0.0.1,127.0.0.1:8000,::1',
         Sanctum::currentApplicationUrlWithPort(),
-        request()->getHost()
+        env('FRONTEND_URL', 'ppss-erp-system.onrender.com')
     ))),
 
     /*
