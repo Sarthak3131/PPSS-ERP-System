@@ -1,0 +1,190 @@
+@import 'tailwindcss';
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+@source '../**/*.jsx';
+
+@theme {
+    --font-sans: 'Sora', 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+        'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+}
+
+:root {
+    /* 1. Premium Light Mode Palette */
+    --erp-bg: #F1F5F9; /* Soft slate/gray background */
+    --erp-surface: #FFFFFF; /* Elevated primary surface */
+    --erp-surface-muted: #F8FAFC; /* Secondary soft surface */
+    
+    --erp-border: #E2E8F0; /* Subtle but visible borders */
+    --erp-ink: #0F172A; /* Slate-900 text */
+    --erp-muted: #64748B; /* Slate-500 muted text */
+    
+    /* 3. Premium Accents */
+    --erp-primary: #4f46e5; /* Indigo */
+    --erp-primary-hover: #4338ca;
+    --erp-success: #059669; /* Emerald */
+    --erp-warning: #D97706; /* Amber */
+    --erp-danger: #E11D48; /* Rose */
+    --erp-info: #0284C7; /* Sky */
+}
+
+/* 2. Glossy Dark Mode Palette */
+html.dark {
+    --erp-bg: #0B1120; /* Deep blue-slate background */
+    --erp-surface: #111827; /* Primary dark panel */
+    --erp-surface-muted: #1E293B; /* Secondary dark panel */
+    
+    --erp-border: rgba(51, 65, 85, 0.6); /* Soft slate glow border */
+    --erp-ink: #F8FAFC;
+    --erp-muted: #94A3B8;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+@layer base {
+    html,
+    body,
+    #ppss-root {
+        min-height: 100%;
+    }
+
+    body {
+        margin: 0;
+        background-color: var(--erp-bg);
+        color: var(--erp-ink);
+        font-family: var(--font-sans);
+        line-height: 1.5;
+        text-rendering: optimizeLegibility;
+    }
+
+    /* 5. Improve interaction system globally */
+    body,
+    button,
+    input,
+    select,
+    textarea,
+    a,
+    .erp-panel,
+    .erp-subpanel {
+        @apply transition-all duration-300;
+    }
+
+    /* 6. Improve focus states globally */
+    *:focus-visible {
+        outline: 2px solid var(--erp-primary);
+        outline-offset: 2px;
+    }
+
+    ::selection {
+        background: rgba(79, 70, 229, 0.25);
+        color: var(--erp-ink);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        letter-spacing: -0.02em;
+    }
+
+    /* 7. Premium scrollbar styling */
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--erp-bg);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--erp-border);
+        border-radius: 4px;
+        border: 2px solid var(--erp-bg); /* Padding effect */
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--erp-muted);
+    }
+    html.dark ::-webkit-scrollbar-thumb {
+        background: var(--erp-surface-muted);
+        border: 2px solid var(--erp-bg);
+    }
+    html.dark ::-webkit-scrollbar-thumb:hover {
+        background: #334155;
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: 200% 0;
+    }
+    100% {
+        background-position: -200% 0;
+    }
+}
+
+@layer components {
+    /* Premium Panel Styles */
+    .erp-panel {
+        background-color: rgba(255, 255, 255, 0.95);
+        border: 1px solid var(--erp-border);
+        border-radius: 0.75rem; /* xl */
+        padding: 1.5rem;
+        backdrop-filter: blur(12px);
+        box-shadow: 
+            0 4px 6px -1px rgba(0, 0, 0, 0.02),
+            0 10px 15px -3px rgba(0, 0, 0, 0.04),
+            0 1px 3px 0 rgba(0, 0, 0, 0.03); /* Soft realistic shadow */
+    }
+    
+    .erp-panel:hover {
+        box-shadow: 
+            0 10px 15px -3px rgba(0, 0, 0, 0.04),
+            0 20px 25px -5px rgba(0, 0, 0, 0.06),
+            0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        transform: translateY(-2px); /* Slightly lifts */
+    }
+
+    html.dark .erp-panel {
+        /* Glossy dark gradient */
+        background: linear-gradient(160deg, rgba(17, 24, 39, 0.95), rgba(11, 17, 32, 0.85));
+        border: 1px solid rgba(255, 255, 255, 0.05); /* Subtle border glow */
+        box-shadow: 
+            0 4px 6px -1px rgba(0, 0, 0, 0.3),
+            0 10px 15px -3px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.03); /* Inner top glow */
+    }
+    
+    html.dark .erp-panel:hover {
+        border-color: rgba(99, 102, 241, 0.2); /* Indigo glow on border */
+        box-shadow: 
+            0 10px 20px -3px rgba(0, 0, 0, 0.5),
+            0 25px 35px -5px rgba(0, 0, 0, 0.6),
+            0 0 15px 0 rgba(79, 70, 229, 0.1), /* Outer indigo glow */
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .erp-subpanel {
+        background-color: rgba(248, 250, 252, 0.8); /* Lighter than panel */
+        border: 1px solid var(--erp-border);
+        border-radius: 0.5rem; /* lg */
+        padding: 1rem;
+        backdrop-filter: blur(8px);
+        box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.01); /* Internal depth */
+    }
+
+    html.dark .erp-subpanel {
+        /* Lighter glossy dark gradient */
+        background: linear-gradient(160deg, rgba(30, 41, 59, 0.9), rgba(17, 24, 39, 0.8));
+        border: 1px solid rgba(255, 255, 255, 0.03);
+        box-shadow: 
+            0 2px 4px -1px rgba(0, 0, 0, 0.2),
+            inset 0 1px 0 0 rgba(255, 255, 255, 0.02); /* Inner depth */
+    }
+}

@@ -1,0 +1,10 @@
+import React from 'react';
+import { Outlet } from 'react-router-dom';
+
+export default function AuthLayout() {
+    return (
+        <div className="min-h-screen flex items-center justify-center px-6 py-10 bg-[var(--erp-bg)]">
+            <Outlet />
+        </div>
+    );
+}
