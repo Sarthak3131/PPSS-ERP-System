@@ -16,6 +16,13 @@ WORKDIR /app
 
 COPY . .
 
+RUN mkdir -p bootstrap/cache storage/framework/cache \
+    storage/framework/sessions \
+    storage/framework/views \
+    storage/logs
+
+RUN chmod -R 775 storage bootstrap/cache
+
 RUN composer install --no-dev --optimize-autoloader
 
 RUN npm install && npm run build
