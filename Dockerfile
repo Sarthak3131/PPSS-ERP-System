@@ -16,7 +16,8 @@ WORKDIR /app
 
 COPY . .
 
-RUN mkdir -p bootstrap/cache storage/framework/cache \
+RUN mkdir -p bootstrap/cache \
+    storage/framework/cache \
     storage/framework/sessions \
     storage/framework/views \
     storage/logs
@@ -33,4 +34,4 @@ RUN php artisan view:clear
 
 EXPOSE 10000
 
-CMD php artisan migrate --force --seed && php artisan serve --host=0.0.0.0 --port=10000
+CMD php artisan migrate --force && php artisan db:seed --force && php artisan optimize && php artisan serve --host=0.0.0.0 --port=10000
