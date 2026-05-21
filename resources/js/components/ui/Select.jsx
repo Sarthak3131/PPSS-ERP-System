@@ -5,7 +5,7 @@ export default function Select({ id, label, hint, error, className, selectClassN
     return (
         <div className={cn('space-y-1', className)}>
             {label ? (
-                <label htmlFor={id} className="block text-xs font-semibold uppercase tracking-[0.12em] text-[var(--erp-muted)]">
+                <label htmlFor={id} className="block text-xs font-semibold uppercase tracking-[0.12em] text-(--erp-muted)">
                     {label}
                 </label>
             ) : null}
@@ -13,8 +13,8 @@ export default function Select({ id, label, hint, error, className, selectClassN
             <select
                 id={id}
                 className={cn(
-                    'h-9 w-full rounded-lg border border-[var(--erp-border)] bg-[var(--erp-surface)] px-3 text-sm text-[var(--erp-ink)] shadow-sm outline-none ring-[var(--erp-primary)]/70 transition focus:ring-2',
-                    error ? 'border-[var(--erp-danger)] ring-[var(--erp-danger)]/40' : 'hover:border-[var(--erp-muted)]',
+                    'h-9 w-full rounded-lg border border-(--erp-border) bg-(--erp-surface) px-3 text-sm text-(--erp-ink) shadow-sm outline-none ring-(--erp-primary)/70 transition focus:ring-2',
+                    error ? 'border-(--erp-danger) ring-(--erp-danger)/40' : 'hover:border-(--erp-muted)',
                     selectClassName,
                 )}
                 {...props}
@@ -22,8 +22,8 @@ export default function Select({ id, label, hint, error, className, selectClassN
                 {children}
             </select>
 
-            {hint ? <p className="text-xs text-[var(--erp-muted)]">{hint}</p> : null}
-            {error ? <p className="text-xs text-[var(--erp-danger)]">{error}</p> : null}
+            {hint ? <p className="text-xs text-(--erp-muted)">{hint}</p> : null}
+            {error ? <p className="text-xs text-(--erp-danger)">{error}</p> : null}
         </div>
     );
 }

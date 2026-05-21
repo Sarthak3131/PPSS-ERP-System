@@ -3,15 +3,15 @@ import cn from '../../utils/cn';
 
 const VARIANTS = {
     primary:
-        'bg-[var(--erp-primary)] text-white hover:bg-[var(--erp-primary-hover)] active:bg-[var(--erp-primary)]/90',
+        'bg-(--erp-primary) text-white hover:bg-(--erp-primary-hover) active:bg-(--erp-primary)/90',
     secondary:
-        'border border-[var(--erp-border)] bg-[var(--erp-surface)] text-[var(--erp-ink)] hover:bg-[var(--erp-surface-muted)] active:bg-[var(--erp-border)]',
+        'border border-(--erp-border) bg-(--erp-surface) text-(--erp-ink) hover:bg-(--erp-surface-muted) active:bg-(--erp-border)',
     outline:
-        'border border-[var(--erp-primary)]/30 bg-[var(--erp-primary)]/5 text-[var(--erp-primary)] hover:bg-[var(--erp-primary)]/10',
+        'border border-(--erp-primary)/30 bg-(--erp-primary)/5 text-(--erp-primary) hover:bg-(--erp-primary)/10',
     ghost:
-        'text-[var(--erp-muted)] hover:bg-[var(--erp-surface-muted)] hover:text-[var(--erp-ink)]',
+        'text-(--erp-muted) hover:bg-(--erp-surface-muted) hover:text-(--erp-ink)',
     danger:
-        'border border-[var(--erp-danger)]/30 bg-[var(--erp-danger)]/5 text-[var(--erp-danger)] hover:bg-[var(--erp-danger)]/10',
+        'border border-(--erp-danger)/30 bg-(--erp-danger)/5 text-(--erp-danger) hover:bg-(--erp-danger)/10',
 };
 
 const SIZES = {
@@ -39,7 +39,7 @@ export default function Button({
             disabled={Component === 'button' ? isDisabled : undefined}
             aria-disabled={Component !== 'button' ? isDisabled : undefined}
             className={cn(
-                'inline-flex items-center justify-center gap-2 rounded-lg font-medium shadow-sm ring-1 ring-transparent transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--erp-primary)] disabled:pointer-events-none disabled:opacity-60 active:translate-y-[1px]',
+                'inline-flex items-center justify-center gap-2 rounded-lg font-medium shadow-sm ring-1 ring-transparent transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-(--erp-primary) disabled:pointer-events-none disabled:opacity-60 active:translate-y-px',
                 VARIANTS[variant] ?? VARIANTS.secondary,
                 SIZES[size] ?? SIZES.md,
                 className,

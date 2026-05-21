@@ -12,6 +12,31 @@ export default defineConfig({
         react(),
         tailwindcss(),
     ],
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks(id) {
+                    if (!id.includes('node_modules')) {
+                        return undefined;
+                    }
+
+                    if (id.includes('recharts')) {
+                        return 'chart';
+                    }
+
+                    if (id.includes('@headlessui') || id.includes('@heroicons')) {
+                        return 'ui';
+                    }
+
+                    if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+                        return 'vendor';
+                    }
+
+                    return 'vendor';
+                },
+            },
+        },
+    },
     server: {
         watch: {
             ignored: ['**/storage/framework/views/**'],

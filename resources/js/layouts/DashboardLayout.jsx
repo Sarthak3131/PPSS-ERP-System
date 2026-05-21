@@ -5,11 +5,13 @@ import { Outlet } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Navbar from '../components/Navbar';
 
-export default function DashboardLayout() {
+const DashboardLayout = React.memo(function DashboardLayout() {
     const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+    const openSidebar = React.useCallback(() => setMobileSidebarOpen(true), []);
+    const closeSidebar = React.useCallback(() => setMobileSidebarOpen(false), []);
 
     return (
-        <div className="min-h-screen bg-[var(--erp-bg)] text-[var(--erp-ink)] transition-colors">
+        <div className="min-h-screen bg-(--erp-bg) text-(--erp-ink) transition-colors">
             <Transition show={mobileSidebarOpen} as={Fragment}>
                 <Dialog as="div" className="relative z-50 lg:hidden" onClose={setMobileSidebarOpen}>
                     <Transition.Child
@@ -21,7 +23,7 @@ export default function DashboardLayout() {
                         leaveFrom="opacity-100"
                         leaveTo="opacity-0"
                     >
-                        <div className="fixed inset-0 bg-[var(--erp-ink)]/60" />
+                        <div className="fixed inset-0 bg-(--erp-ink)/60" />
                     </Transition.Child>
 
                     <div className="fixed inset-0 flex">
@@ -35,7 +37,7 @@ export default function DashboardLayout() {
                             leaveTo="-translate-x-full"
                         >
                             <Dialog.Panel className="w-72 max-w-[85vw]">
-                                <Sidebar closeSidebar={() => setMobileSidebarOpen(false)} />
+                                <Sidebar closeSidebar={closeSidebar} />
                             </Dialog.Panel>
                         </Transition.Child>
                     </div>
@@ -48,7 +50,7 @@ export default function DashboardLayout() {
                 </aside>
 
                 <div className="flex min-h-screen flex-1 flex-col">
-                    <Navbar openSidebar={() => setMobileSidebarOpen(true)} />
+                    <Navbar openSidebar={openSidebar} />
                     <main className="flex-1 px-3 pb-6 pt-4 sm:px-5 lg:px-6 lg:pb-8 lg:pt-5">
                         <Outlet />
                     </main>
@@ -56,4 +58,6 @@ export default function DashboardLayout() {
             </div>
         </div>
     );
-}
+});
+
+export default DashboardLayout;

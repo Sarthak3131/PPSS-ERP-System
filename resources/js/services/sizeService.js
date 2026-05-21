@@ -1,12 +1,26 @@
-import api from './api';
-import { parseSuccessPayload } from '../utils/apiEnvelope';
+import { SIZE_SEED } from '../data/mockSizes';
 
-export async function getAll(params = {}) {
-    const response = await api.get('/v1/sizes', { params });
-    return parseSuccessPayload(response);
-}
+const STORAGE_KEY = 'ppss_size_catalog_mock_v1';
+const clone = (value) => JSON.parse(JSON.stringify(value));
 
-export async function getById(id) {
-    const response = await api.get(`/v1/sizes/${id}`);
-    return parseSuccessPayload(response).data;
-}
+let memoryState = { items: clone(SIZE_SEED), nextId: 1009 };
+
+function canUseStorage() { return typeof window !== 'undefined' && Boolean(window.localStorage); }
+function normalize(items) { return (Array.isArray(items) ? items : []).map((item) => ({ id: item.id || `size-${Date.now()}`, sizeCode: String(item.sizeCode || '').trim().toUpperCase(), displayName: String(item.displayName || '').trim(), category: String(item.category || '').trim(), width: item.width === null || item.width === undefined || item.width === '' ? null : Number(item.width), height: item.height === null || item.height === undefined || item.height === '' ? null : Number(item.height), diameter: item.diameter === null || item.diameter === undefined || item.diameter === '' ? null : Number(item.diameter), unit: String(item.unit || '').trim(), tolerance: String(item.tolerance || '').trim(), status: String(item.status || 'Draft').trim(), notes: String(item.notes || '').trim(), usageNotes: String(item.usageNotes || '').trim(), supplierCompatibility: String(item.supplierCompatibility || '').trim(), materialType: String(item.materialType || '').trim(), operationalRemarks: String(item.operationalRemarks || '').trim(), inventoryQuantity: Number.isFinite(Number(item.inventoryQuantity)) ? Number(item.inventoryQuantity) : 0, usageCount: Number.isFinite(Number(item.usageCount)) ? Number(item.usageCount) : 0, linkedProducts: Array.isArray(item.linkedProducts) ? item.linkedProducts : [], createdAt: item.createdAt || new Date().toISOString(), updatedAt: item.updatedAt || new Date().toISOString() })); }
+function createInitialState() { return { items: normalize(SIZE_SEED), nextId: 1009 }; }
+function readState() { if (!canUseStorage()) return memoryState; const raw = window.localStorage.getItem(STORAGE_KEY); if (!raw) { const initial = createInitialState(); window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial)); return initial; } try { const parsed = JSON.parse(raw); if (Array.isArray(parsed)) { const state = { items: normalize(parsed), nextId: 1009 }; window.localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); return state; } return { items: normalize(parsed.items), nextId: Number(parsed.nextId) || 1009 }; } catch { const initial = createInitialState(); window.localStorage.setItem(STORAGE_KEY, JSON.stringify(initial)); return initial; } }
+function writeState(state) { memoryState = { items: clone(state.items), nextId: state.nextId }; if (canUseStorage()) window.localStorage.setItem(STORAGE_KEY, JSON.stringify(memoryState)); }
+function ensureUniqueCode(items, sizeCode, ignoreId = null) { const normalized = String(sizeCode || '').trim().toUpperCase(); const duplicate = items.find((item) => item.sizeCode === normalized && item.id !== ignoreId); if (duplicate) throw new Error(`Size code ${normalized} already exists.`); }
+function nextIdentifier(state) { const id = `size-${state.nextId}`; state.nextId += 1; return id; }
+
+export async function getAll() { const state = readState(); return { data: clone(state.items), meta: { total: state.items.length } }; }
+export async function getById(id) { const state = readState(); return clone(state.items.find((item) => String(item.id) === String(id)) || null); }
+export async function create(payload) { const state = readState(); ensureUniqueCode(state.items, payload.sizeCode); const nextItem = normalize([{ ...payload, id: nextIdentifier(state), createdAt: new Date().toISOString(), updatedAt: new Date().toISOString() }])[0]; state.items = [nextItem, ...state.items]; writeState(state); return clone(nextItem); }
+export async function update(id, payload) { const state = readState(); const index = state.items.findIndex((item) => String(item.id) === String(id)); if (index === -1) throw new Error('Size not found.'); ensureUniqueCode(state.items, payload.sizeCode, String(id)); const updated = normalize([{ ...state.items[index], ...payload, id: state.items[index].id, createdAt: state.items[index].createdAt, updatedAt: new Date().toISOString() }])[0]; state.items = state.items.map((item, itemIndex) => (itemIndex === index ? updated : item)); writeState(state); return clone(updated); }
+export async function archive(id) { const state = readState(); const index = state.items.findIndex((item) => String(item.id) === String(id)); if (index === -1) throw new Error('Size not found.'); const archived = normalize([{ ...state.items[index], status: 'Archived', updatedAt: new Date().toISOString() }])[0]; state.items = state.items.map((item, itemIndex) => (itemIndex === index ? archived : item)); writeState(state); return clone(archived); }
+export async function duplicate(id) { const state = readState(); const source = state.items.find((item) => String(item.id) === String(id)); if (!source) throw new Error('Size not found.'); let code = `${source.sizeCode}-COPY`; let suffix = 2; while (state.items.some((item) => item.sizeCode === code)) { code = `${source.sizeCode}-COPY-${suffix}`; suffix += 1; } const duplicated = normalize([{ ...source, id: nextIdentifier(state), sizeCode: code, displayName: `${source.displayName} Copy`, status: 'Draft', updatedAt: new Date().toISOString(), createdAt: new Date().toISOString() }])[0]; state.items = [duplicated, ...state.items]; writeState(state); return clone(duplicated); }
+export async function remove(id) { const state = readState(); const nextItems = state.items.filter((item) => String(item.id) !== String(id)); if (nextItems.length === state.items.length) throw new Error('Size not found.'); state.items = nextItems; writeState(state); return true; }
+export async function bulkArchive(ids = []) { const state = readState(); const idSet = new Set((Array.isArray(ids) ? ids : []).map((item) => String(item))); state.items = state.items.map((item) => (idSet.has(String(item.id)) ? normalize([{ ...item, status: 'Archived', updatedAt: new Date().toISOString() }])[0] : item)); writeState(state); return true; }
+export async function bulkRemove(ids = []) { const state = readState(); const idSet = new Set((Array.isArray(ids) ? ids : []).map((item) => String(item))); state.items = state.items.filter((item) => !idSet.has(String(item.id))); writeState(state); return true; }
+export async function resetMockData() { const initial = createInitialState(); writeState(initial); return { data: clone(initial.items), meta: { total: initial.items.length } }; }
+

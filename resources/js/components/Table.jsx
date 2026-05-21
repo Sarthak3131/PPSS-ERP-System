@@ -5,7 +5,7 @@ import { ChevronUpDownIcon } from '@heroicons/react/24/outline';
  * Table: Production-ready, configurable table component.
  * Supports columns, data, row actions, and loading state.
  */
-export default function Table({
+const Table = React.memo(function Table({
     columns = [],
     data = [],
     rowActions = null,
@@ -104,4 +104,6 @@ export default function Table({
             </div>
         </div>
     );
-}
+});
+
+export default Table;

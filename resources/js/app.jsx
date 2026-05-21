@@ -5,7 +5,7 @@ import router from './router';
 import useAuthStore from './store/authStore';
 import { initializeTheme } from './utils/theme';
 import { ToastProvider } from './components/ui/ToastProvider';
-import Loader from './components/Loader';
+import PageLoader from './components/PageLoader';
 import '../css/app.css';
 
 function ensureMountNode() {
@@ -24,7 +24,6 @@ function ensureMountNode() {
 
 function BootstrapSession({ children }) {
     const hydrate = useAuthStore((s) => s.hydrate);
-    const sessionChecked = useAuthStore((s) => s.sessionChecked);
 
     React.useEffect(() => {
         if (useAuthStore.persist.hasHydrated()) {
@@ -37,14 +36,6 @@ function BootstrapSession({ children }) {
         return () => unsub();
     }, [hydrate]);
 
-    if (!sessionChecked) {
-        return (
-            <div className="flex min-h-screen items-center justify-center bg-slate-50">
-                <Loader label="Initializing session..." />
-            </div>
-        );
-    }
-
     return children;
 }
 
@@ -55,7 +46,9 @@ root.render(
     <React.StrictMode>
         <ToastProvider>
             <BootstrapSession>
-                <RouterProvider router={router} />
+                <React.Suspense fallback={<PageLoader label="Loading ERP module..." />}>
+                    <RouterProvider router={router} />
+                </React.Suspense>
             </BootstrapSession>
         </ToastProvider>
     </React.StrictMode>

@@ -11,7 +11,7 @@ const ICONS = {
 
 export function ToastViewport({ children }) {
     if (typeof document === 'undefined') return null;
-    return createPortal(<div className="fixed right-4 top-4 z-[60] space-y-2">{children}</div>, document.body);
+    return createPortal(<div className="fixed right-4 top-8 z-60 space-y-2">{children}</div>, document.body);
 }
 
 export function Toast({ tone = 'info', title, message, onClose }) {

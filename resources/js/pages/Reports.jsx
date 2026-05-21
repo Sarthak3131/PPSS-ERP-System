@@ -3,12 +3,16 @@ import PageHeader from '../components/PageHeader';
 import Card from '../components/Card';
 import Button from '../components/ui/Button';
 import { ArrowDownTrayIcon } from '@heroicons/react/24/outline';
-import { ResponsiveContainer, LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import TableToolbar from '../components/ui/TableToolbar';
 import Select from '../components/ui/Select';
 import LoadingSkeleton from '../components/ui/LoadingSkeleton';
 import * as reportService from '../services/reportService';
 import { useToast } from '../components/ui/ToastProvider';
+import PageLoader from '../components/PageLoader';
+
+const ReportsStatusChartSection = React.lazy(() => import('../components/reports/ReportsStatusChartSection'));
+const ReportsInventoryRiskChartSection = React.lazy(() => import('../components/reports/ReportsInventoryRiskChartSection'));
+const ReportsUtilizationChartSection = React.lazy(() => import('../components/reports/ReportsUtilizationChartSection'));
 
 const EMPTY_SUMMARY = {
     total_orders: 0,
@@ -19,7 +23,7 @@ const EMPTY_SUMMARY = {
     pending: 0,
 };
 
-export default function Reports() {
+const Reports = React.memo(function Reports() {
     const [timeRange, setTimeRange] = React.useState('7d');
     const [plant, setPlant] = React.useState('Plant A');
     
@@ -66,9 +70,9 @@ export default function Reports() {
         fetchReports();
     }, [timeRange, plant]);
 
-    const summaryData = summary ?? EMPTY_SUMMARY;
+    const summaryData = React.useMemo(() => summary ?? EMPTY_SUMMARY, [summary]);
 
-    const reportCards = [
+    const reportCards = React.useMemo(() => [
         {
             title: 'Total Orders',
             value: summaryData.total_orders,
@@ -87,9 +91,9 @@ export default function Reports() {
             hint: 'Finished goods',
             trend: 'Live API',
         },
-    ];
+    ], [summaryData]);
 
-    const statusData = summary
+    const statusData = React.useMemo(() => (summary
         ? [
               { status: 'Draft', count: summaryData.draft ?? 0 },
               { status: 'Pending', count: summaryData.pending ?? 0 },
@@ -97,20 +101,20 @@ export default function Reports() {
               { status: 'In Progress', count: summaryData.in_progress ?? 0 },
               { status: 'Completed', count: summaryData.completed ?? 0 },
           ]
-        : [];
+        : []), [summary, summaryData]);
 
-    const inventoryRiskData = inventory
+    const inventoryRiskData = React.useMemo(() => (inventory
         ? [
               { risk: 'Low', count: Array.isArray(inventory.low_stock) ? inventory.low_stock.length : 0 },
               { risk: 'Critical', count: Array.isArray(inventory.critical_stock) ? inventory.critical_stock.length : 0 },
               { risk: 'Out of Stock', count: Array.isArray(inventory.out_of_stock) ? inventory.out_of_stock.length : 0 },
           ]
-        : [];
+        : []), [inventory]);
 
-    const mappedUtilization = utilization.map((u) => ({
+    const mappedUtilization = React.useMemo(() => utilization.map((u) => ({
         line: u.machine?.name ?? '—',
         utilization: Number(u.utilization_percentage) || 0,
-    }));
+    })), [utilization]);
 
     const chartStatusData = statusData;
     const chartInventoryRiskData = inventoryRiskData;
@@ -166,61 +170,19 @@ export default function Reports() {
             />
             {isLoading ? <LoadingSkeleton lines={10} /> : <div className="grid gap-4 lg:grid-cols-3">
                 <div className="space-y-4 lg:col-span-2">
-                    <section className="erp-panel">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-(--erp-ink)">Order Status Funnel</h3>
-                            <span className="text-xs text-(--erp-success)">Live State</span>
-                        </div>
-                        <div className="mt-2 h-56">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <LineChart data={chartStatusData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" />
-                                    <XAxis dataKey="status" stroke="#64748b" fontSize={11} />
-                                    <YAxis stroke="#64748b" fontSize={11} />
-                                    <Tooltip />
-                                    <Line type="monotone" dataKey="count" stroke="#1e3a8a" strokeWidth={2.5} />
-                                </LineChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 border-t border-(--erp-border) pt-2 text-xs text-(--erp-muted)">Live snapshot from database</div>
-                    </section>
+                    <React.Suspense fallback={<PageLoader label="Loading report charts..." />}>
+                        <ReportsStatusChartSection chartStatusData={chartStatusData} />
+                    </React.Suspense>
 
-                    <section className="erp-panel">
-                        <div className="flex items-center justify-between">
-                            <h3 className="text-sm font-semibold text-(--erp-ink)">Inventory Risk Profile</h3>
-                            <span className="text-xs text-(--erp-danger)">Critical Alerts</span>
-                        </div>
-                        <div className="mt-2 h-56">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartInventoryRiskData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" />
-                                    <XAxis dataKey="risk" stroke="#64748b" fontSize={11} />
-                                    <YAxis stroke="#64748b" fontSize={11} />
-                                    <Tooltip />
-                                    <Bar dataKey="count" fill="#be123c" radius={[6, 6, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 border-t border-(--erp-border) pt-2 text-xs text-(--erp-muted)">Breakdown of inventory shortages</div>
-                    </section>
+                    <React.Suspense fallback={<PageLoader label="Loading report charts..." />}>
+                        <ReportsInventoryRiskChartSection chartInventoryRiskData={chartInventoryRiskData} />
+                    </React.Suspense>
                 </div>
 
                 <aside className="space-y-4">
-                    <section className="erp-panel">
-                        <h3 className="text-sm font-semibold text-(--erp-ink)">Utilization Chart</h3>
-                        <div className="mt-2 h-56">
-                            <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={chartUtilizationData}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="#cbd5e1" />
-                                    <XAxis dataKey="line" stroke="#64748b" fontSize={11} />
-                                    <YAxis stroke="#64748b" fontSize={11} />
-                                    <Tooltip />
-                                    <Bar dataKey="utilization" fill="#047857" radius={[6, 6, 0, 0]} />
-                                </BarChart>
-                            </ResponsiveContainer>
-                        </div>
-                        <div className="mt-2 border-t border-(--erp-border) pt-2 text-xs text-(--erp-muted)">Live machine utilization %</div>
-                    </section>
+                    <React.Suspense fallback={<PageLoader label="Loading report charts..." />}>
+                        <ReportsUtilizationChartSection chartUtilizationData={chartUtilizationData} />
+                    </React.Suspense>
                     <section className="erp-panel">
                         <h3 className="text-lg font-semibold text-(--erp-ink)">Activity Log</h3>
                         <p className="mt-1 text-sm text-(--erp-muted)">Recent system events.</p>
@@ -244,4 +206,6 @@ export default function Reports() {
             </div>}
         </section>
     );
-}
+});
+
+export default Reports;

@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
 import DashboardLayout from '../layouts/DashboardLayout';
 import ProtectedRoute from '../components/ProtectedRoute';
 import PublicRoute from '../components/PublicRoute';
 import ErrorBoundary from '../components/ErrorBoundary';
-import Login from '../pages/Login';
-import Register from '../pages/Register';
-import Dashboard from '../pages/Dashboard';
-import Products from '../pages/Products';
-import Sizes from '../pages/Sizes';
-import BOM from '../pages/BOM';
-import ProductionOrders from '../pages/ProductionOrders';
-import MachinePlanning from '../pages/MachinePlanning';
-import SchedulingBoard from '../pages/SchedulingBoard';
-import Inventory from '../pages/Inventory';
-import Reports from '../pages/Reports';
-import Settings from '../pages/Settings';
-import NotFound from '../pages/NotFound';
 import { ROUTE_NAMES } from '../utils/constants';
+import { getRouteLoader } from './routeLoaders';
+
+const lazyRoute = (path) => lazy(getRouteLoader(path));
+
+const Login = lazyRoute(ROUTE_NAMES.LOGIN);
+const Register = lazyRoute(ROUTE_NAMES.REGISTER);
+const Dashboard = lazyRoute(ROUTE_NAMES.DASHBOARD);
+const Products = lazyRoute(ROUTE_NAMES.PRODUCTS);
+const Sizes = lazyRoute(ROUTE_NAMES.SIZES);
+const BOM = lazyRoute(ROUTE_NAMES.BOM);
+const ProductionOrders = lazyRoute(ROUTE_NAMES.PRODUCTION_ORDERS);
+const MachinePlanning = lazyRoute(ROUTE_NAMES.MACHINE_PLANNING);
+const SchedulingBoard = lazyRoute(ROUTE_NAMES.SCHEDULING_BOARD);
+const Inventory = lazyRoute(ROUTE_NAMES.INVENTORY);
+const Reports = lazyRoute(ROUTE_NAMES.REPORTS);
+const Settings = lazyRoute(ROUTE_NAMES.SETTINGS);
+const NotFound = lazyRoute(ROUTE_NAMES.NOT_FOUND);
 
 const router = createBrowserRouter([
     {
