@@ -3,7 +3,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import Select from '../ui/Select';
-import TextArea from '../ui/TextArea';
+import Textarea from '../ui/Textarea';
 import { PRODUCT_SEED } from '../../data/mockProducts';
 
 const UNIT_OPTIONS = ['EA', 'KIT', 'SET', 'PACK', 'ROLL', 'M', 'MM', 'KG', 'L'];
@@ -161,7 +161,7 @@ export default function BOMFormModal({ open, onClose, onSubmit, mode = 'create',
                     </div>
 
                     <div className="md:col-span-2">
-                        <TextArea id="bom-notes" label="Notes" value={form.notes} onChange={(event) => handleChange('notes', event.target.value)} placeholder="Revision notes, inspection details, or special handling instructions." />
+                        <Textarea id="bom-notes" label="Notes" value={form.notes} onChange={(event) => handleChange('notes', event.target.value)} placeholder="Revision notes, inspection details, or special handling instructions." />
                     </div>
                 </div>
             </form>

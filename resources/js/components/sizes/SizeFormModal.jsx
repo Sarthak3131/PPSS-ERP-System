@@ -3,7 +3,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import Select from '../ui/Select';
-import TextArea from '../ui/TextArea';
+import Textarea from '../ui/Textarea';
 import { SIZE_CATEGORIES, SIZE_STATUS_OPTIONS, SIZE_UNIT_OPTIONS } from '../../data/mockSizes';
 import { formatSizeMeasurementPreview } from './sizeFormatting';
 
@@ -159,7 +159,7 @@ export default function SizeFormModal({ open, onClose, onSubmit, mode = 'create'
 
                         <FormInput id="size-supplier" label="Supplier Compatibility" value={form.supplierCompatibility} onChange={(e) => updateField('supplierCompatibility', e.target.value)} placeholder="Delta Fasteners Co." />
                         <FormInput id="size-material" label="Material Type" value={form.materialType} onChange={(e) => updateField('materialType', e.target.value)} placeholder="High-tensile steel" />
-                        <TextArea
+                        <Textarea
                             id="size-usage-notes"
                             label="Usage Notes"
                             value={form.usageNotes}
@@ -176,7 +176,7 @@ export default function SizeFormModal({ open, onClose, onSubmit, mode = 'create'
                             <p className="mt-0.5 text-xs text-(--erp-muted)">Capture conditions that help production and maintenance teams.</p>
                         </div>
 
-                        <TextArea
+                        <Textarea
                             id="size-notes"
                             label="Notes"
                             value={form.notes}
@@ -186,7 +186,7 @@ export default function SizeFormModal({ open, onClose, onSubmit, mode = 'create'
                             textAreaClassName="min-h-36 resize-y"
                         />
 
-                        <TextArea
+                        <Textarea
                             id="size-ops"
                             label="Operational Remarks"
                             value={form.operationalRemarks}

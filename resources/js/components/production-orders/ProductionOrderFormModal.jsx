@@ -3,7 +3,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import Select from '../ui/Select';
-import TextArea from '../ui/TextArea';
+import Textarea from '../ui/Textarea';
 import { PRODUCT_SEED } from '../../data/mockProducts';
 import { PRODUCTION_ORDER_SEED } from '../../data/mockProductionOrders';
 
@@ -159,9 +159,9 @@ export default function ProductionOrderFormModal({ open, onClose, onSubmit, mode
 
                     <FormInput id="po-team" label="Assigned Team" value={form.team} onChange={(e) => handleChange('team', e.target.value)} placeholder="Line A" />
 
-                    <TextArea id="po-remarks" label="Production Remarks" value={form.remarks} onChange={(e) => handleChange('remarks', e.target.value)} placeholder="Notes for operators and planners" />
+                    <Textarea id="po-remarks" label="Production Remarks" value={form.remarks} onChange={(e) => handleChange('remarks', e.target.value)} placeholder="Notes for operators and planners" />
 
-                    <TextArea id="po-qa-notes" label="QA Remarks" value={form.qaNotes} onChange={(e) => handleChange('qaNotes', e.target.value)} placeholder="QA inspection notes" />
+                    <Textarea id="po-qa-notes" label="QA Remarks" value={form.qaNotes} onChange={(e) => handleChange('qaNotes', e.target.value)} placeholder="QA inspection notes" />
                 </div>
             </form>
         </Modal>

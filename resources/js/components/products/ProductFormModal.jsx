@@ -4,7 +4,7 @@ import Modal from '../ui/Modal';
 import Button from '../ui/Button';
 import FormInput from '../ui/FormInput';
 import Select from '../ui/Select';
-import TextArea from '../ui/TextArea';
+import Textarea from '../ui/Textarea';
 import cn from '../../utils/cn';
 import { PRODUCT_CATEGORIES, PRODUCT_SIZE_OPTIONS, PRODUCT_STATUS_OPTIONS } from '../../data/mockProducts';
 
@@ -177,7 +177,7 @@ export default function ProductFormModal({ open, onClose, onSubmit, mode = 'crea
                     </p>
                 ) : null}
 
-                <TextArea
+                <Textarea
                     id="product-description"
                     label="Description"
                     value={form.description}
